@@ -9,13 +9,11 @@ import os
 def linkedInScraper(scraping_option, max_jobs=10):
     # URL based on scraping option
     urls = {
-        'Boston Software Engineer': 'https://www.linkedin.com/jobs/search?keywords=Software%20Engineer&location=Boston%2C%20Massachusetts%2C%20United%20States&geoId=102380872&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0',
-        'Boston Data Scientist': 'https://www.linkedin.com/jobs/search?keywords=Data%20Scientist&location=Boston&geoId=&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0',
-        'Chicago Software Engineer': 'https://www.linkedin.com/jobs/search?keywords=Software%20Engineer&location=Chicago%2C%20Illinois%2C%20United%20States&geoId=103112676&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0',
-        'Chicago Data Scientist': 'https://www.linkedin.com/jobs/search?keywords=Data%20Scientist&location=Chicago%2C%20Illinois%2C%20United%20States&geoId=103112676&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0',
-        'San Francisco Software Engineer': 'https://www.linkedin.com/jobs/search?keywords=Software%20Engineer&location=San%20Francisco%20Bay%20Area&geoId=90000084&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0',
-        'San Francisco Data Scientist': 'https://www.linkedin.com/jobs/search?keywords=Data%20Scientist&location=San%20Francisco%20Bay%20Area&geoId=90000084&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0',
-        'SDE San Francisco': 'https://www.linkedin.com/jobs/search/?currentJobId=3818332011&keywords=sde%20san%20francisco&origin=SWITCH_SEARCH_VERTICAL'
+        'Software Engineer USA': 'https://www.linkedin.com/jobs/search/?currentJobId=3804821214&keywords=software%20engineer&origin=JOBS_HOME_KEYWORD_AUTOCOMPLETE&refresh=true',
+        'Data Scientist USA': 'https://www.linkedin.com/jobs/search/?currentJobId=3823230643&geoId=103644278&keywords=data%20scientist&location=United%20States&origin=JOB_SEARCH_PAGE_KEYWORD_AUTOCOMPLETE&refresh=true',
+        'Data Engineer USA': 'https://www.linkedin.com/jobs/search/?currentJobId=3827215573&geoId=103644278&keywords=data%20engineer&location=United%20States&origin=JOB_SEARCH_PAGE_KEYWORD_AUTOCOMPLETE&refresh=true',
+        'Data Analyst USA': 'https://www.linkedin.com/jobs/search?keywords=Data%20Scientist&location=Chicago%2C%20Illinois%2C%20United%20States&geoId=103112676&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0',
+        'Project Manager USA': 'https://www.linkedin.com/jobs/search/?currentJobId=3798672879&geoId=103644278&keywords=project%20manager&location=United%20States&origin=JOB_SEARCH_PAGE_KEYWORD_AUTOCOMPLETE&refresh=true',
     }
     url = urls.get(scraping_option, '')
 
@@ -85,13 +83,11 @@ def linkedInScraper(scraping_option, max_jobs=10):
 # Streamlit UI
 st.title('LinkedIn Job Scraper')
 scraping_option = st.selectbox('Select an option:', [
-    'Boston Software Engineer',
-    'Boston Data Scientist',
-    'Chicago Software Engineer',
-    'Chicago Data Scientist',
-    'San Francisco Software Engineer',
-    'San Francisco Data Scientist',
-    'SDE San Francisco'
+    'Software Engineer USA',
+    'Data Scientist USA',
+    'Data Engineer USA',
+    'Data Analyst USA',
+    'Project Manager USA'
 ])
 
 if st.button('Scrape Jobs'):

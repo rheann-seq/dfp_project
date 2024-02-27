@@ -13,45 +13,46 @@ def linkedInScraper(scraping_option, max_jobs):
         'Software Engineer USA': 'https://www.linkedin.com/jobs/search/?currentJobId=3804821214&keywords=software%20engineer&origin=JOBS_HOME_KEYWORD_AUTOCOMPLETE&refresh=true',
         'Data Scientist USA': 'https://www.linkedin.com/jobs/search/?currentJobId=3823230643&geoId=103644278&keywords=data%20scientist&location=United%20States&origin=JOB_SEARCH_PAGE_KEYWORD_AUTOCOMPLETE&refresh=true',
         'Data Engineer USA': 'https://www.linkedin.com/jobs/search/?currentJobId=3827215573&geoId=103644278&keywords=data%20engineer&location=United%20States&origin=JOB_SEARCH_PAGE_KEYWORD_AUTOCOMPLETE&refresh=true',
-        'Data Analyst USA': 'https://www.linkedin.com/jobs/search?keywords=Data%20Scientist&location=Chicago%2C%20Illinois%2C%20United%20States&geoId=103112676&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0',
+        'Data Analyst USA': 'https://www.linkedin.com/jobs/search/?currentJobId=3823250764&geoId=103644278&keywords=data%20analyst&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true',
         'Project Manager USA': 'https://www.linkedin.com/jobs/search/?currentJobId=3798672879&geoId=103644278&keywords=project%20manager&location=United%20States&origin=JOB_SEARCH_PAGE_KEYWORD_AUTOCOMPLETE&refresh=true',
     }
     url = urls.get(scraping_option, '')
+    try:
+        if url:
+            driver = webdriver.Chrome()
+            driver.get(url)
 
-    if url:
-        driver = webdriver.Chrome()
-        driver.get(url)
+            # Scroll to load more jobs
+            while len(driver.find_elements(By.CSS_SELECTOR, 'li')) < max_jobs:
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                time.sleep(2)
 
-        # Scroll to load more jobs
-        while len(driver.find_elements(By.CSS_SELECTOR, 'li')) < max_jobs:
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(2)
+            # Extract job details
+            job_lists = driver.find_element(By.CLASS_NAME, 'jobs-search__results-list')
+            jobs = job_lists.find_elements(By.TAG_NAME, 'li')
 
-        # Extract job details
-        job_lists = driver.find_element(By.CLASS_NAME, 'jobs-search__results-list')
-        jobs = job_lists.find_elements(By.TAG_NAME, 'li')
-
-        job_data = []
-        for job in jobs[:max_jobs]:
-            job_title = job.find_element(By.CSS_SELECTOR, 'h3').get_attribute('innerText')
-            company_name = job.find_element(By.CSS_SELECTOR, 'h4').get_attribute('innerText')
-            location = job.find_element(By.CSS_SELECTOR, '[class="job-search-card__location"]').get_attribute('innerText')
-            date = job.find_element(By.CSS_SELECTOR, 'div>div>time').get_attribute('datetime')
-            job_link = job.find_element(By.CSS_SELECTOR, 'a').get_attribute('href')
+            job_data = []
+            for job in jobs[:max_jobs]:
+                job_title = job.find_element(By.CSS_SELECTOR, 'h3').get_attribute('innerText')
+                company_name = job.find_element(By.CSS_SELECTOR, 'h4').get_attribute('innerText')
+                location = job.find_element(By.CSS_SELECTOR, '[class="job-search-card__location"]').get_attribute('innerText')
+                date = job.find_element(By.CSS_SELECTOR, 'div>div>time').get_attribute('datetime')
+                job_link = job.find_element(By.CSS_SELECTOR, 'a').get_attribute('href')
 
 
-            job_data.append({'Title': job_title, 'Company': company_name, 'Location': location, 'Date': date, 'Link': job_link})
+                job_data.append({'Title': job_title, 'Company': company_name, 'Location': location, 'Date': date, 'Link': job_link})
 
-        # Save data to CSV
-        filename = f'LinkedIn_{scraping_option.replace(" ", "_")}.csv'
-        job_df = pd.DataFrame(job_data)
-        job_df.to_csv(filename, index=False)
+            # Save data to CSV
+            filename = f'LinkedIn_{scraping_option.replace(" ", "_")}.csv'
+            job_df = pd.DataFrame(job_data)
+            job_df.to_csv(filename, index=False)
 
-        st.success(f"Scraping done for {scraping_option}, Data stored in CSV File: {filename}")
-        plotGraph(filename)
-    else:
-        st.error('Invalid scraping option')
-
+            st.success(f"Scraping done for {scraping_option}, Data stored in CSV File: {filename}")
+            plotGraph(filename)
+        else:
+            st.error('Invalid scraping option')
+    except:
+        st.error('Try again')
 
 
 def plotGraph(filename):
@@ -62,7 +63,7 @@ def plotGraph(filename):
     location_counts = df['Location'].value_counts()
 
     # Plot the locations
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 12))
     location_counts.plot(kind='bar', color='skyblue')
     plt.title('Job Postings by Location')
     plt.xlabel('Location')
@@ -86,7 +87,7 @@ scraping_option = st.selectbox('Select an option:', [
 ])
 
 if st.button('Scrape Jobs'):
-    linkedInScraper(scraping_option, max_jobs=10)
+    linkedInScraper(scraping_option, max_jobs=30)
 
 filename = f'LinkedIn_{scraping_option.replace(" ", "_")}.csv'
 # plotGraph(filename)

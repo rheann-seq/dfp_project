@@ -3,10 +3,11 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
 import pandas as pd
-import os
+import matplotlib.pyplot as plt
 
 # Function to scrape LinkedIn job data
-def linkedInScraper(scraping_option, max_jobs=10):
+
+def linkedInScraper(scraping_option, max_jobs):
     # URL based on scraping option
     urls = {
         'Boston Software Engineer': 'https://www.linkedin.com/jobs/search?keywords=Software%20Engineer&location=Boston%2C%20Massachusetts%2C%20United%20States&geoId=102380872&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0',
@@ -40,39 +41,9 @@ def linkedInScraper(scraping_option, max_jobs=10):
             date = job.find_element(By.CSS_SELECTOR, 'div>div>time').get_attribute('datetime')
             job_link = job.find_element(By.CSS_SELECTOR, 'a').get_attribute('href')
 
-            salary = job.find_element(By.CSS_SELECTOR, '[class="job-search-card__salary-info"]').get_attribute('innerText')
-            print("salary for:"+company_name+" is: "+salary)
-            #added skills
-            # job_skills = ""
-            # try:
-            #     job_skills =  job.find_element(By.CSS_SELECTOR, 'button[aria-label="View strong skill match modal"]').text
-            #     print("skills:",job_skills)
-            # except:
-            #     print("Couldn't find skills")
 
-            skills = []
-            example_skills = ['Java', 'Cloud', 'SQL', 'Node']
-            print("job element:", job)
-            salary_elements = job.find_elements(By.XPATH, "//*[contains(text(), '$')]")
-            print("size of salary_els", len(salary_elements))
-            for i in salary_elements:
-                if '$' in i.text:
-                    print("salary element is:"+ i.text)
-            # if salary_elements:
-            #     print("The page contains the word 'Java'")
-            #     print(salary_elements[0].text)
-            #     salary_element = salary_elements[0]
+            job_data.append({'Title': job_title, 'Company': company_name, 'Location': location, 'Date': date, 'Link': job_link})
 
-                # Find the next sibling element
-                # next_sibling_element = salary_element.find_element(By.XPATH, "following-sibling::*")
-                # print(next_sibling_element.text)
-                # third_sibling_element = next_sibling_element.find_element(By.XPATH, "following-sibling::*")
-                # print("third:"+third_sibling_element.text)
-
-            job_data.append({'Title': job_title, 'Company': company_name, 'Location': location, 'Date': date, 'Link': job_link, 'Skills': ""})
-
-            # salary_el = job.find_element(By.XPATH, '/html/body/div[5]/div[3]/div[4]/div/div/main/div/div[2]/div[2]/div/div[2]/div/div[1]/div/div[1]/div/div[1]/div[1]/div[3]/ul/li[1]	')
-            # print("found salary:::"+salary_el.text)
         # Save data to CSV
         filename = f'LinkedIn_{scraping_option.replace(" ", "_")}.csv'
         job_df = pd.DataFrame(job_data)
@@ -82,17 +53,43 @@ def linkedInScraper(scraping_option, max_jobs=10):
     else:
         st.error('Invalid scraping option')
 
+
+
+def plotGraph(filename):
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(filename)
+
+    # Count the occurrences of each location
+    location_counts = df['Location'].value_counts()
+
+    # Plot the locations
+    plt.figure(figsize=(12, 6))
+    location_counts.plot(kind='bar', color='skyblue')
+    plt.title('Job Postings by Location')
+    plt.xlabel('Location')
+    plt.ylabel('Number of Job Postings')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.show()
+
+    # Display the plot in Streamlit
+    st.pyplot(plt)
+
+
 # Streamlit UI
 st.title('LinkedIn Job Scraper')
 scraping_option = st.selectbox('Select an option:', [
-    'Boston Software Engineer',
-    'Boston Data Scientist',
-    'Chicago Software Engineer',
-    'Chicago Data Scientist',
-    'San Francisco Software Engineer',
-    'San Francisco Data Scientist',
-    'SDE San Francisco'
-])
+        'Boston Software Engineer',
+        'Boston Data Scientist',
+        'Chicago Software Engineer',
+        'Chicago Data Scientist',
+        'San Francisco Software Engineer',
+        'San Francisco Data Scientist',
+        'SDE San Francisco'
+ ])
 
 if st.button('Scrape Jobs'):
-    linkedInScraper(scraping_option, max_jobs=50)
+    linkedInScraper(scraping_option, max_jobs=10)
+
+filename = f'LinkedIn_{scraping_option.replace(" ", "_")}.csv'
+plotGraph(filename)

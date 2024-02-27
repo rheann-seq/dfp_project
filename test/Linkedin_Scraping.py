@@ -90,7 +90,7 @@ def linkedInScraper(scraping_option):
     if scraping_option == 'Boston Software Engineer':
         filename = '../LinkedIn_Software_Engineer_Boston.csv'
     elif scraping_option == 'Boston Data Scientist':
-        filename = 'LinkedIn_Data_Scientist_Boston.csv'
+        filename = '../updated_code/LinkedIn_Data_Scientist_Boston.csv'
     elif scraping_option == 'Chicago Software Engineer':
         filename = 'LinkedIn_Software_Engineer_Chicago.csv'
     elif scraping_option == 'Chicago Data Scientist':

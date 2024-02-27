@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read the CSV file into a DataFrame
-df = pd.read_csv('../updated_code/LinkedIn_Data_Scientist_Boston.csv')
+df = pd.read_csv('LinkedIn_Data_Scientist_Boston.csv')
 
 # Count the occurrences of each location
 location_counts = df['Location'].value_counts()
@@ -16,4 +16,3 @@ plt.ylabel('Number of Job Postings')
 plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 plt.show()
-

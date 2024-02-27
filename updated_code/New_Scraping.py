@@ -90,4 +90,3 @@ if st.button('Scrape Jobs'):
     linkedInScraper(scraping_option, max_jobs=30)
 
 filename = f'LinkedIn_{scraping_option.replace(" ", "_")}.csv'
-# plotGraph(filename)

@@ -48,6 +48,7 @@ def linkedInScraper(scraping_option, max_jobs):
         job_df.to_csv(filename, index=False)
 
         st.success(f"Scraping done for {scraping_option}, Data stored in CSV File: {filename}")
+        plotGraph(filename)
     else:
         st.error('Invalid scraping option')
 
@@ -88,4 +89,4 @@ if st.button('Scrape Jobs'):
     linkedInScraper(scraping_option, max_jobs=10)
 
 filename = f'LinkedIn_{scraping_option.replace(" ", "_")}.csv'
-plotGraph(filename)
+# plotGraph(filename)
